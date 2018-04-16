@@ -17,11 +17,12 @@ from ctypes import (
 from .constants import (
     BYTE_SIZE, INT_SIZE, RecordTypeEnum
 )
-from .base import SimpleSerializerMixin
+from .base import SimpleSerializerMixin, BinaryRecordStructure as brs
 from . import records, mixins
 from . utils import read_record_type
 from .. import enums
 from .. utils.i18n import get_i18n_items
+from .common import ObjectNull
 
 import logging
 logger = logging.getLogger('udlg')
@@ -229,10 +230,28 @@ class UDLGFile(SimpleSerializerMixin, ctypes.Structure):
         record_list = self.data.records
         for idx, record in enumerate(record_list):
             for jdx, member in enumerate(record.members):
-                if isinstance(member, records.BinaryObjectString):
-                    content = member.value.value
+                if idx == 1:
+                    continue
+                def maybe_stringify(datum):
+                    x = type(datum).__name__ + ' --- '
+                    if isinstance(datum, ObjectNull):
+                        return 'null'.encode('utf-8')
+                    if type(datum).__str__ is not brs.__str__:
+                        return str(datum).encode('utf-8')
+                    if type(datum).__repr__ is not brs.__repr__:
+                        return repr(datum).encode('utf-8')
+                def get_value(member):
+                    if isinstance(member, records.BinaryObjectString):
+                        return maybe_stringify(member.value.value)
+                    if hasattr(member, 'value') and hasattr(member.value, 'value'):
+                        return maybe_stringify(member.value.value)
+                    if hasattr(member, 'value'):
+                        return maybe_stringify(member.value)
+                    return maybe_stringify(member)
+                content = get_value(member)
+                if content is not None:
                     append(
-                        b"%i,%i=>'%s'" % (idx, jdx, content)
+                        b"%i,%i=>%s" % (idx, jdx, content)
                     )
         return b"\n".join(i18n)
 
