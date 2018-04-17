@@ -230,19 +230,16 @@ class UDLGFile(SimpleSerializerMixin, ctypes.Structure):
         record_list = self.data.records
         for idx, record in enumerate(record_list):
             for jdx, member in enumerate(record.members):
-                if idx == 1:
-                    continue
+                #if idx == 1:
+                #    continue
                 def maybe_stringify(datum):
-                    x = type(datum).__name__ + ' --- '
-                    if isinstance(datum, ObjectNull):
-                        return 'null'.encode('utf-8')
-                    if type(datum).__str__ is not brs.__str__:
-                        return str(datum).encode('utf-8')
-                    if type(datum).__repr__ is not brs.__repr__:
-                        return repr(datum).encode('utf-8')
+                    #if isinstance(datum, brs):
+                    return repr(datum).encode('utf-8')
                 def get_value(member):
                     if isinstance(member, records.BinaryObjectString):
                         return maybe_stringify(member.value.value)
+                    if isinstance(member, records.ObjectNull):
+                        return 'null'.encode('utf-8')
                     if hasattr(member, 'value') and hasattr(member.value, 'value'):
                         return maybe_stringify(member.value.value)
                     if hasattr(member, 'value'):
@@ -251,7 +248,7 @@ class UDLGFile(SimpleSerializerMixin, ctypes.Structure):
                 content = get_value(member)
                 if content is not None:
                     append(
-                        b"%i,%i=>%s" % (idx, jdx, content)
+                        b"%i,%i = %s" % (idx, jdx, content)
                     )
         return b"\n".join(i18n)
 

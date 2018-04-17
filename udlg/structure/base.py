@@ -84,9 +84,9 @@ class SimpleSerializerMixin(object):
 
 
 class BinaryRecordStructure(SimpleSerializerMixin, Structure):
-    def __repr__(self):
-        return '<%s at 0x%08x>' % (self.__class__.__name__,
-                                   id(self))
+    #def __repr__(self):
+    #    return '<%s at 0x%08x>' % (self.__class__.__name__,
+    #                               id(self))
 
     def get_void_ptr(self):
         return cast(pointer(self), c_void_p)
@@ -120,3 +120,22 @@ class BinaryRecordStructure(SimpleSerializerMixin, Structure):
                 pass
             else:
                 raise TypeError("Wrong field type: `%r`" % type(field_type))
+    def __repr__(self):
+        class_name = type(self).__name__
+        if class_name in ['ClassWithMembersAndTypes']:
+            return class_name + '()'
+        ret = class_name
+        ret += '('
+        first = True
+        for field_name, field_type in self._fields_:
+            #if field_name in ['record_type']:
+            #    continue
+            if not first:
+                ret += ', '
+            first = False
+            entry = getattr(self, field_name.replace('_ptr', ''))
+            ret += field_name
+            ret += '='
+            ret += repr(entry)
+        ret += ')'
+        return ret
