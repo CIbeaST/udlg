@@ -20,7 +20,7 @@ def unpack(entry, opts):
         i18n_path, file_name = store_path.rsplit('/', 1)
         if not os.path.exists(i18n_path):
             os.makedirs(i18n_path)
-        file_name = file_name+'.txt'
+        file_name = file_name+'.json'
         store_path = os.path.join(i18n_path, file_name)
         if not(opts.skip_processed and os.path.exists(store_path)):
             print("Processing: %s" % entry.path)
