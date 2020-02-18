@@ -16,7 +16,7 @@ def unpack(entry, opts):
         store_path = os.path.join(
             opts.output_dir, entry.path.split(opts.dialogs_dir)[-1][1:]
         )
-        i18n_path, file_name = store_path.rsplit('/', 1)
+        i18n_path, file_name = store_path.rsplit('\\', 1)
         if not os.path.exists(i18n_path):
             os.makedirs(i18n_path)
         file_name = file_name.replace('.udlg', '.json')
