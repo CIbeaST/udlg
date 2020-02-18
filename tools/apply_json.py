@@ -51,8 +51,6 @@ def process(opts, i18n_cache, path=None):
         if entry.is_dir():
             process(opts, i18n_cache, path=entry.path)
         else:
-            if not entry.name.endswith('.udlg'):
-                continue
             apply(entry, i18n_cache, opts)
 
 

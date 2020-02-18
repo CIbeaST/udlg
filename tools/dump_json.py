@@ -36,8 +36,6 @@ def process(opts, path=None):
         if entry.is_dir():
             process(opts, path=entry.path)
         else:
-            if not entry.name.endswith('.udlg'):
-                continue
             unpack(entry, opts)
 
 
