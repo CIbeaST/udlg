@@ -248,7 +248,7 @@ class UDLGFile(SimpleSerializerMixin, ctypes.Structure):
                 content = get_value(member)
                 if content is not None:
                     append(
-                        b"%i,%i = %s" % (idx, jdx, content)
+                        b"%i,%i=>%s" % (idx, jdx, content)
                     )
         return b"\n".join(i18n)
 
